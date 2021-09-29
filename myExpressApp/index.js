@@ -22,14 +22,6 @@ const db = new Sequelize({
   database: 'todolist1'
 });
 
-// var db = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'javascript5@A',
-//   database: 'todolist1',
-//   port: 3306
-// });
-
 db.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
@@ -38,27 +30,7 @@ db.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-// db.connect((err) => {
-//   if (err) {
-//     throw err;
-//   }
-//   console.log('MySQL connected');
-// });
-
 const Note = db.define('items', { id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true,}, title: Sequelize.TEXT, isDone: Sequelize.BOOLEAN });
-// db.sync({ force: true })
-//   .then(() => {
-//     console.log(`Database & tables created!`);
-
-//     Note.bulkCreate([
-//       { id:1, title: 'Complete JS course', isDone: true },
-//       { id:2, title: 'Complete JS videos before that', isDone: false },
-//     ]).then(function() {
-//       return Note.findAll();
-//     }).then(function(notes) {
-//       console.log(notes);
-//     });
-//   });
 
 app.use(cors(corsOptions));
 app.use(express.json());
