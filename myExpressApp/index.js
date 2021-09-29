@@ -12,20 +12,53 @@ const corsOptions = {
 }
 
 var mysql = require('mysql');
-var db = mysql.createConnection({
+const Sequelize = require('sequelize');
+
+const db = new Sequelize({
+  // The `host` parameter is required for other databases
   host: 'localhost',
-  user: 'root',
-  password: 'javascript5@A',
-  database: 'todolist1',
-  port: 3306
+  dialect: 'sqlite',
+  storage: './database.sqlite',
+  database: 'todolist1'
 });
 
-db.connect((err) => {
-  if (err) {
-    throw err;
-  }
-  console.log('MySQL connected');
-});
+// var db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'javascript5@A',
+//   database: 'todolist1',
+//   port: 3306
+// });
+
+db.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
+
+// db.connect((err) => {
+//   if (err) {
+//     throw err;
+//   }
+//   console.log('MySQL connected');
+// });
+
+const Note = db.define('items', { id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true,}, title: Sequelize.TEXT, isDone: Sequelize.BOOLEAN });
+// db.sync({ force: true })
+//   .then(() => {
+//     console.log(`Database & tables created!`);
+
+//     Note.bulkCreate([
+//       { id:1, title: 'Complete JS course', isDone: true },
+//       { id:2, title: 'Complete JS videos before that', isDone: false },
+//     ]).then(function() {
+//       return Note.findAll();
+//     }).then(function(notes) {
+//       console.log(notes);
+//     });
+//   });
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -42,30 +75,29 @@ app.get("/list_movies", (req, res) => {
 });
 
 app.get('/get_items', (req, res) => {
-  db.query('SELECT * FROM items ORDER BY id DESC', (err, rows) => {
-    if (err) throw err;
+  Note.findAll({order: [
+    ['id', 'DESC']]}).then(notes => res.json(notes));
+});
 
-    console.log('Data received from Db:\n');
-    console.log(rows);
-    res.end(JSON.stringify(rows));
+app.post('/post_item', (req, res) => {
+  Note.create({ title: req.body.title, isDone: req.body.isDone }).then(function(note) {
+    res.json(note);
   });
 });
 
-app.post("/post_item", (req, res, config) => {
-  var sql = 'INSERT INTO items SET ?';
-  const newItem = req.body;
-  console.log("UserDetails", newItem);
-  db.query(sql, newItem, (err, rows, fields) => {
-    if (!err) {
-        res.send(rows);
-        // res.end(JSON.stringify("success", res));
-    } else {
-        console.log(err.message);
-        res.send(err);
-        // res.end(JSON.stringify(err.message));
-        
+app.post('/remove_item', (req, res) => {
+  Note.destroy({
+    where: {
+      id: req.body.id
     }
-})
+  });
+});
+
+app.post('/update_item', (req, res) => {
+  Note.update(
+    {isDone: true},
+    {where: {id: req.body.id}}
+  )
 });
 
 app.listen(port, () => {

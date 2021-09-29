@@ -13,6 +13,10 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
-    "pug": "2.0.0-beta11"
+    "mysql2": "^2.3.0",
+    "mysql3": "^0.6.0",
+    "pug": "2.0.0-beta11",
+    "sequelize": "^6.6.5",
+    "sqlite3": "^5.0.2"
   }
 }
