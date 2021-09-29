@@ -41,7 +41,7 @@ app.get("/list_movies", (req, res) => {
   });
 });
 
-app.get('/createdb', (req, res) => {
+app.get('/get_items', (req, res) => {
   db.query('SELECT * FROM items ORDER BY id DESC', (err, rows) => {
     if (err) throw err;
 
@@ -51,7 +51,7 @@ app.get('/createdb', (req, res) => {
   });
 });
 
-app.post("/postItem", (req, res, config) => {
+app.post("/post_item", (req, res, config) => {
   var sql = 'INSERT INTO items SET ?';
   const newItem = req.body;
   console.log("UserDetails", newItem);
